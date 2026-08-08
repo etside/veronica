@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Track Order — Veronica</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        fontFamily: { sans: ['Inter', 'sans-serif'] },
+        colors: {
+          primary: { DEFAULT: '#141414', light: '#292929' },
+          secondary: '#737373', muted: '#a3a3a3', border: '#e5e5e5', surface: '#fafafa',
+          rose: { DEFAULT: '#f63d68', dark: '#c01048' },
+        }
+      }}
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; color: #141414; background: #fff; }
+    .scroll-bar { animation: scroll-left 20s linear infinite; }
+    @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .nav-link { position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1.5px; background: #141414; transition: width 0.3s ease; }
+    .nav-link:hover::after { width: 100%; }
+    .step-active { background: #141414; color: #fff; }
+    .step-done { background: #22c55e; color: #fff; }
+    .step-pending { background: #e5e5e5; color: #a3a3a3; }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="bg-primary text-white text-[11px] tracking-wider overflow-hidden h-8 flex items-center">
+    <div class="scroll-bar whitespace-nowrap flex gap-16">
+      <span>&#10024; NEW COLLECTION | SHOP NOW &#10024;</span>
+      <span>FREE Shipping Worldwide on orders above: USD 100+</span>
+      <span>&#10024; NEW COLLECTION | SHOP NOW &#10024;</span>
+      <span>FREE Shipping Worldwide on orders above: USD 100+</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white border-b border-border">
+    <div class="max-w-[1536px] mx-auto px-4 lg:px-8 flex items-center justify-between h-16">
+      <a href="index.html" class="text-xl lg:text-2xl font-semibold tracking-wide">VERONICA</a>
+      <nav class="hidden lg:flex items-center gap-8 text-[13px] font-medium tracking-wide">
+        <a href="index.html" class="nav-link">All Products</a>
+        <a href="index.html" class="nav-link">New Arrivals</a>
+        <a href="index.html" class="nav-link">Best Sellers</a>
+        <a href="index.html" class="nav-link text-rose font-semibold">Sale</a>
+        <a href="index.html" class="nav-link">Collections</a>
+      </nav>
+      <div class="flex items-center gap-4">
+        <a href="cart.html" class="relative p-2 hover:bg-surface rounded-full transition" aria-label="Cart">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span id="cart-badge" class="absolute -top-0.5 -right-0.5 bg-rose text-white text-[9px] w-4 h-4 rounded-full items-center justify-center font-semibold hidden">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-[640px] mx-auto px-4 py-12">
+    <!-- Search Form -->
+    <div id="track-search" class="text-center">
+      <h1 class="text-2xl font-semibold tracking-wide mb-2">TRACK YOUR ORDER</h1>
+      <p class="text-secondary text-[14px] mb-8">Enter your order ID to see the status</p>
+      <div class="flex gap-2 max-w-md mx-auto">
+        <input id="track-input" type="text" placeholder="e.g. ORD-ABC12345" class="flex-1 border border-border rounded-lg px-4 py-3 text-[14px] focus:outline-none focus:border-primary transition">
+        <button onclick="trackOrder()" class="bg-primary text-white text-[13px] font-semibold px-6 py-3 rounded-lg hover:bg-primary-light transition">Track</button>
+      </div>
+      <p id="track-error" class="text-rose text-[13px] mt-3 hidden">Order not found. Please check your order ID.</p>
+    </div>
+
+    <!-- Order Result -->
+    <div id="track-result" class="hidden mt-8">
+      <div class="bg-surface rounded-xl p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-semibold" id="result-id">—</h2>
+            <p class="text-[13px] text-secondary" id="result-date">—</p>
+          </div>
+          <span id="result-status" class="px-3 py-1 rounded-full text-[12px] font-semibold">—</span>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="flex items-center justify-between mt-6 mb-2">
+          <div class="flex flex-col items-center flex-1">
+            <div id="step-pending" class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold step-pending mb-1">1</div>
+            <span class="text-[11px] text-secondary">Pending</span>
+          </div>
+          <div class="flex-1 h-0.5 bg-border mx-1" id="line-1"></div>
+          <div class="flex flex-col items-center flex-1">
+            <div id="step-confirmed" class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold step-pending mb-1">2</div>
+            <span class="text-[11px] text-secondary">Confirmed</span>
+          </div>
+          <div class="flex-1 h-0.5 bg-border mx-1" id="line-2"></div>
+          <div class="flex flex-col items-center flex-1">
+            <div id="step-shipped" class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold step-pending mb-1">3</div>
+            <span class="text-[11px] text-secondary">Shipped</span>
+          </div>
+          <div class="flex-1 h-0.5 bg-border mx-1" id="line-3"></div>
+          <div class="flex flex-col items-center flex-1">
+            <div id="step-delivered" class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold step-pending mb-1">4</div>
+            <span class="text-[11px] text-secondary">Delivered</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Details -->
+      <div class="bg-surface rounded-xl p-6 mb-6">
+        <h3 class="text-[13px] font-semibold mb-3">SHIPPING TO</h3>
+        <p id="result-address" class="text-[13px] text-secondary"></p>
+      </div>
+
+      <div class="bg-surface rounded-xl p-6 mb-6">
+        <h3 class="text-[13px] font-semibold mb-3">ORDER ITEMS</h3>
+        <div id="result-items" class="space-y-3"></div>
+      </div>
+
+      <div class="flex justify-between text-[15px] font-semibold border-t border-border pt-4 mb-8">
+        <span>Total</span><span id="result-total">—</span>
+      </div>
+
+      <div class="text-center">
+        <button onclick="resetTrack()" class="text-[13px] text-rose font-medium hover:underline">Track another order</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-primary text-white mt-16">
+    <div class="max-w-[1536px] mx-auto px-4 py-12 lg:py-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div>
+          <h3 class="text-xl font-semibold tracking-wider mb-3">VERONICA</h3>
+          <p class="text-muted text-[13px] leading-relaxed mb-4">Discover exquisite luxury pret dresses.</p>
+        </div>
+        <div>
+          <h4 class="text-[13px] font-semibold tracking-wider uppercase mb-4">Quick Links</h4>
+          <ul class="space-y-2.5">
+            <li><a href="index.html" class="text-[13px] text-muted hover:text-white transition">All Products</a></li>
+            <li><a href="track.html" class="text-[13px] text-muted hover:text-white transition">Track Order</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-[13px] font-semibold tracking-wider uppercase mb-4">Help</h4>
+          <ul class="space-y-2.5">
+            <li><a href="#" class="text-[13px] text-muted hover:text-white transition">Shipping Policy</a></li>
+            <li><a href="#" class="text-[13px] text-muted hover:text-white transition">Return & Exchange</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-[13px] font-semibold tracking-wider uppercase mb-4">Stay in Touch</h4>
+          <div class="flex">
+            <input type="email" placeholder="Your email" class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-2.5 text-[13px] text-white placeholder:text-muted focus:outline-none focus:border-white/40 transition">
+            <button class="bg-white text-primary px-4 py-2.5 rounded-r-lg text-[13px] font-semibold hover:bg-gray-100 transition">Subscribe</button>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 mt-10 pt-6 text-center">
+        <p class="text-[12px] text-muted">&copy; 2026 Veronica. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/store.js"></script>
+  <script>
+    const sym = DB.settings().currencySymbol;
+    const statusOrder = ['pending', 'confirmed', 'shipped', 'delivered'];
+
+    function trackOrder() {
+      const input = document.getElementById('track-input').value.trim();
+      const error = document.getElementById('track-error');
+      if (!input) { error.classList.remove('hidden'); return; }
+
+      const orders = DB.orders();
+      const order = orders.find(o => o.id.toLowerCase() === input.toLowerCase());
+      if (!order) { error.classList.remove('hidden'); document.getElementById('track-result').classList.add('hidden'); return; }
+
+      error.classList.add('hidden');
+      document.getElementById('track-search').classList.add('hidden');
+      document.getElementById('track-result').classList.remove('hidden');
+
+      document.getElementById('result-id').textContent = order.id;
+      document.getElementById('result-date').textContent = new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      const statusEl = document.getElementById('result-status');
+      statusEl.textContent = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+      const colors = { pending: 'bg-yellow-100 text-yellow-800', confirmed: 'bg-blue-100 text-blue-800', shipped: 'bg-purple-100 text-purple-800', delivered: 'bg-green-100 text-green-800', cancelled: 'bg-red-100 text-red-800' };
+      statusEl.className = `px-3 py-1 rounded-full text-[12px] font-semibold ${colors[order.status] || 'bg-gray-100 text-gray-800'}`;
+
+      // Update progress steps
+      const currentIdx = statusOrder.indexOf(order.status);
+      statusOrder.forEach((s, i) => {
+        const el = document.getElementById('step-' + s);
+        if (order.status === 'cancelled') {
+          el.className = 'w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold step-pending mb-1';
+        } else if (i < currentIdx) {
+          el.className = 'w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold step-done mb-1';
+        } else if (i === currentIdx) {
+          el.className = 'w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold step-active mb-1';
+        } else {
+          el.className = 'w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold step-pending mb-1';
+        }
+      });
+
+      // Update connecting lines
+      for (let i = 1; i <= 3; i++) {
+        const line = document.getElementById('line-' + i);
+        if (order.status !== 'cancelled' && currentIdx >= i) {
+          line.className = 'flex-1 h-0.5 bg-green-500 mx-1';
+        }
+      }
+
+      // Address
+      const c = order.customer;
+      document.getElementById('result-address').textContent = `${c.firstName} ${c.lastName}, ${c.address}, ${c.city}, ${c.zip}, ${c.country}`;
+
+      // Items
+      const itemsEl = document.getElementById('result-items');
+      order.items.forEach(item => {
+        itemsEl.innerHTML += `
+          <div class="flex gap-3 items-center">
+            <img src="${item.image}" class="w-12 h-16 object-cover rounded">
+            <div class="flex-1 text-[13px]">
+              <p class="font-medium">${item.name}</p>
+              <p class="text-secondary">Size: ${item.size} &middot; Qty: ${item.qty}</p>
+            </div>
+            <span class="font-medium text-[13px]">${sym}${(item.price * item.qty).toFixed(2)}</span>
+          </div>`;
+      });
+
+      document.getElementById('result-total').textContent = `${sym}${order.total.toFixed(2)}`;
+    }
+
+    function resetTrack() {
+      document.getElementById('track-search').classList.remove('hidden');
+      document.getElementById('track-result').classList.add('hidden');
+      document.getElementById('track-input').value = '';
+      document.getElementById('track-error').classList.add('hidden');
+    }
+
+    // Auto-track if URL has ?id=
+    const params = new URLSearchParams(location.search);
+    if (params.get('id')) {
+      document.getElementById('track-input').value = params.get('id');
+      trackOrder();
+    }
+
+    function updateCartBadge() {
+      const c = DB.cartCount();
+      const b = document.getElementById('cart-badge');
+      if (c > 0) { b.textContent = c; b.classList.remove('hidden'); b.classList.add('flex'); }
+      else b.classList.add('hidden');
+    }
+    updateCartBadge();
+  </script>
+</body>
+</html>

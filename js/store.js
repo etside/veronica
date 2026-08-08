@@ -119,6 +119,15 @@ const DB = {
       { slug: 'nova', name: 'NOVA', price: 92.00, image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&q=80', category: 'New Arrivals', sizes: ['XS','S','M','L'], description: 'Celestial-inspired design with a modern edge.', stock: 9, badge: 'NEW' },
     ];
     this.saveProducts(demos.map(d => ({ ...d, id: crypto.randomUUID(), createdAt: new Date().toISOString() })));
+
+    // Seed demo coupons
+    if (!this._get('coupons')) {
+      this._set('coupons', [
+        { code: 'VERONICA10', type: 'percentage', value: 10, minOrder: null, usageLimit: 100, startDate: null, endDate: null, active: true },
+        { code: 'SALE20', type: 'percentage', value: 20, minOrder: 50, usageLimit: 50, startDate: null, endDate: null, active: true },
+        { code: 'FLAT15', type: 'fixed', value: 15, minOrder: 75, usageLimit: 30, startDate: null, endDate: null, active: true },
+      ]);
+    }
   }
 };
 

@@ -313,14 +313,23 @@
     function applyCoupon() {
       const code = document.getElementById('coupon-input').value.trim().toUpperCase();
       const msg = document.getElementById('coupon-msg');
-      if (code === 'VERONICA10') {
-        couponDiscount = DB.cartTotal() * 0.1;
-        msg.textContent = '10% discount applied!';
+      const coupons = DB._get('coupons') || [];
+      const coupon = coupons.find(c => c.code === code && c.active !== false);
+      const subtotal = DB.cartTotal();
+
+      if (coupon && (!coupon.minOrder || subtotal >= coupon.minOrder)) {
+        if (coupon.type === 'percentage') {
+          couponDiscount = subtotal * (coupon.value / 100);
+          msg.textContent = `${coupon.value}% discount applied!`;
+        } else {
+          couponDiscount = Math.min(coupon.value, subtotal);
+          msg.textContent = `$${coupon.value.toFixed(2)} discount applied!`;
+        }
         msg.className = 'text-[12px] mt-2 text-green-600';
-      } else if (code === 'SALE20') {
-        couponDiscount = DB.cartTotal() * 0.2;
-        msg.textContent = '20% discount applied!';
-        msg.className = 'text-[12px] mt-2 text-green-600';
+      } else if (coupon && coupon.minOrder && subtotal < coupon.minOrder) {
+        couponDiscount = 0;
+        msg.textContent = `Minimum order $${coupon.minOrder.toFixed(2)} required`;
+        msg.className = 'text-[12px] mt-2 text-rose';
       } else {
         couponDiscount = 0;
         msg.textContent = 'Invalid coupon code';

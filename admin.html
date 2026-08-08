@@ -81,6 +81,14 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path d="M6 6h.008v.008H6V6z"/></svg>
           Categories
         </button>
+        <button onclick="showSection('coupons')" class="sidebar-link w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px]" data-section="coupons">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"/></svg>
+          Coupons
+        </button>
+        <button onclick="showSection('customers')" class="sidebar-link w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px]" data-section="customers">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+          Customers
+        </button>
         <button onclick="showSection('settings')" class="sidebar-link w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px]" data-section="settings">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           Settings
@@ -206,6 +214,55 @@
               <input id="new-category" type="text" placeholder="New category name" class="flex-1 bg-surface border border-border rounded-lg px-4 py-2.5 text-[13px] focus:outline-none">
               <button onclick="addCategory()" class="bg-primary text-white px-5 py-2.5 rounded-lg text-[13px] font-medium hover:bg-primary-light transition">Add</button>
             </div>
+          </div>
+        </div>
+
+        <!-- Coupons -->
+        <div id="sec-coupons" class="section hidden">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-[15px] font-semibold">Manage Coupons</h3>
+            <button onclick="openCouponModal()" class="bg-primary text-white text-[13px] font-semibold px-5 py-2.5 rounded-lg hover:bg-primary-light transition flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4.5v15m7.5-7.5h-15"/></svg>
+              Add Coupon
+            </button>
+          </div>
+          <div class="bg-white rounded-xl border border-border overflow-hidden">
+            <table class="w-full text-[13px]">
+              <thead class="bg-surface border-b border-border">
+                <tr>
+                  <th class="text-left px-4 py-3 font-medium">Code</th>
+                  <th class="text-left px-4 py-3 font-medium">Type</th>
+                  <th class="text-left px-4 py-3 font-medium">Value</th>
+                  <th class="text-left px-4 py-3 font-medium hidden sm:table-cell">Min Order</th>
+                  <th class="text-left px-4 py-3 font-medium hidden sm:table-cell">Usage Limit</th>
+                  <th class="text-left px-4 py-3 font-medium">Status</th>
+                  <th class="text-right px-4 py-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="coupons-table" class="divide-y divide-border"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Customers -->
+        <div id="sec-customers" class="section hidden">
+          <div class="flex items-center gap-3 mb-6">
+            <input id="customer-search" type="text" placeholder="Search customers..." oninput="renderCustomers()" class="bg-white border border-border rounded-lg px-4 py-2 text-[13px] w-64 focus:outline-none focus:border-primary transition">
+          </div>
+          <div class="bg-white rounded-xl border border-border overflow-hidden">
+            <table class="w-full text-[13px]">
+              <thead class="bg-surface border-b border-border">
+                <tr>
+                  <th class="text-left px-4 py-3 font-medium">Name</th>
+                  <th class="text-left px-4 py-3 font-medium">Email</th>
+                  <th class="text-left px-4 py-3 font-medium hidden sm:table-cell">Phone</th>
+                  <th class="text-left px-4 py-3 font-medium hidden sm:table-cell">City</th>
+                  <th class="text-left px-4 py-3 font-medium">Orders</th>
+                  <th class="text-left px-4 py-3 font-medium">Total Spent</th>
+                </tr>
+              </thead>
+              <tbody id="customers-table" class="divide-y divide-border"></tbody>
+            </table>
           </div>
         </div>
 
@@ -335,6 +392,66 @@
     </div>
   </div>
 
+  <!-- Coupon Modal -->
+  <div id="coupon-modal" class="modal-overlay">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 id="coupon-modal-title" class="text-[16px] font-semibold">Add Coupon</h3>
+        <button onclick="closeCouponModal()" class="p-2 hover:bg-surface rounded-full transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form id="coupon-form" onsubmit="saveCoupon(event)" class="space-y-4">
+        <input type="hidden" id="cf-id">
+        <div>
+          <label class="text-[12px] font-medium text-secondary block mb-1">Coupon Code *</label>
+          <input id="cf-code" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] uppercase" placeholder="e.g. SUMMER10">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Type *</label>
+            <select id="cf-type" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+              <option value="percentage">Percentage (%)</option>
+              <option value="fixed">Fixed Amount ($)</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Value *</label>
+            <input id="cf-value" type="number" step="0.01" min="0" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Min Order ($)</label>
+            <input id="cf-min" type="number" step="0.01" min="0" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Usage Limit</label>
+            <input id="cf-limit" type="number" min="1" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Start Date</label>
+            <input id="cf-start" type="date" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">End Date</label>
+            <input id="cf-end" type="date" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <input id="cf-active" type="checkbox" checked class="accent-primary w-4 h-4">
+          <label for="cf-active" class="text-[13px]">Active</label>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="submit" class="bg-primary text-white text-[13px] font-semibold px-6 py-2.5 rounded-lg hover:bg-primary-light transition">Save Coupon</button>
+          <button type="button" onclick="closeCouponModal()" class="border border-border text-[13px] font-semibold px-6 py-2.5 rounded-lg hover:bg-surface transition">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div id="toast" class="toast bg-primary text-white px-6 py-3 rounded-lg shadow-lg text-[13px] font-medium flex items-center gap-2">
     <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
@@ -356,6 +473,8 @@
       if (name === 'products') renderProducts();
       if (name === 'orders') renderOrders();
       if (name === 'categories') renderCategories();
+      if (name === 'coupons') renderCoupons();
+      if (name === 'customers') renderCustomers();
       if (name === 'settings') loadSettings();
     }
 
@@ -595,6 +714,126 @@
       DB.saveCategories(cats);
       renderCategories();
       showToast('Category removed');
+    }
+
+    /* ── Coupons ── */
+    function renderCoupons() {
+      const coupons = DB._get('coupons') || [];
+      const tbody = document.getElementById('coupons-table');
+      if (coupons.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-secondary">No coupons yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = coupons.map(c => `
+        <tr class="hover:bg-surface/50">
+          <td class="px-4 py-3 font-medium font-mono">${c.code}</td>
+          <td class="px-4 py-3 text-secondary">${c.type === 'percentage' ? 'Percentage' : 'Fixed'}</td>
+          <td class="px-4 py-3 font-medium">${c.type === 'percentage' ? c.value + '%' : sym + c.value.toFixed(2)}</td>
+          <td class="px-4 py-3 hidden sm:table-cell text-secondary">${c.minOrder ? sym + c.minOrder.toFixed(2) : '—'}</td>
+          <td class="px-4 py-3 hidden sm:table-cell text-secondary">${c.usageLimit || '∞'}</td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-0.5 rounded text-[11px] font-medium ${c.active !== false ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">${c.active !== false ? 'Active' : 'Inactive'}</span>
+          </td>
+          <td class="px-4 py-3 text-right">
+            <button onclick="editCoupon('${c.code}')" class="text-secondary hover:text-primary transition p-1 mr-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931z"/></svg>
+            </button>
+            <button onclick="deleteCoupon('${c.code}')" class="text-secondary hover:text-rose transition p-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg>
+            </button>
+          </td>
+        </tr>`).join('');
+    }
+
+    function openCouponModal(coupon) {
+      document.getElementById('coupon-modal-title').textContent = coupon ? 'Edit Coupon' : 'Add Coupon';
+      document.getElementById('cf-id').value = coupon?.code || '';
+      document.getElementById('cf-code').value = coupon?.code || '';
+      document.getElementById('cf-type').value = coupon?.type || 'percentage';
+      document.getElementById('cf-value').value = coupon?.value || '';
+      document.getElementById('cf-min').value = coupon?.minOrder || '';
+      document.getElementById('cf-limit').value = coupon?.usageLimit || '';
+      document.getElementById('cf-start').value = coupon?.startDate || '';
+      document.getElementById('cf-end').value = coupon?.endDate || '';
+      document.getElementById('cf-active').checked = coupon?.active !== false;
+      document.getElementById('coupon-modal').classList.add('open');
+    }
+
+    function closeCouponModal() {
+      document.getElementById('coupon-modal').classList.remove('open');
+    }
+
+    function editCoupon(code) {
+      const coupons = DB._get('coupons') || [];
+      openCouponModal(coupons.find(c => c.code === code));
+    }
+
+    function saveCoupon(e) {
+      e.preventDefault();
+      const id = document.getElementById('cf-id').value;
+      const data = {
+        code: document.getElementById('cf-code').value.trim().toUpperCase(),
+        type: document.getElementById('cf-type').value,
+        value: parseFloat(document.getElementById('cf-value').value),
+        minOrder: parseFloat(document.getElementById('cf-min').value) || null,
+        usageLimit: parseInt(document.getElementById('cf-limit').value) || null,
+        startDate: document.getElementById('cf-start').value || null,
+        endDate: document.getElementById('cf-end').value || null,
+        active: document.getElementById('cf-active').checked,
+      };
+      const coupons = DB._get('coupons') || [];
+      if (id) {
+        const idx = coupons.findIndex(c => c.code === id);
+        if (idx >= 0) coupons[idx] = { ...coupons[idx], ...data };
+      } else {
+        if (coupons.some(c => c.code === data.code)) { showToast('Coupon code already exists'); return; }
+        coupons.push(data);
+      }
+      DB._set('coupons', coupons);
+      closeCouponModal();
+      renderCoupons();
+      showToast(id ? 'Coupon updated' : 'Coupon added');
+    }
+
+    function deleteCoupon(code) {
+      if (!confirm('Delete this coupon?')) return;
+      const coupons = DB._get('coupons') || [];
+      DB._set('coupons', coupons.filter(c => c.code !== code));
+      renderCoupons();
+      showToast('Coupon deleted');
+    }
+
+    /* ── Customers ── */
+    function renderCustomers() {
+      const search = document.getElementById('customer-search')?.value?.toLowerCase() || '';
+      const orders = DB.orders();
+      const customerMap = {};
+      orders.forEach(o => {
+        const c = o.customer;
+        const key = c.email;
+        if (!customerMap[key]) {
+          customerMap[key] = { firstName: c.firstName, lastName: c.lastName, email: c.email, phone: c.phone, city: c.city, orders: 0, totalSpent: 0 };
+        }
+        customerMap[key].orders++;
+        customerMap[key].totalSpent += o.total || 0;
+      });
+      let customers = Object.values(customerMap);
+      if (search) customers = customers.filter(c => `${c.firstName} ${c.lastName} ${c.email} ${c.phone}`.toLowerCase().includes(search));
+
+      const tbody = document.getElementById('customers-table');
+      if (customers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-secondary">No customers found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = customers.map(c => `
+        <tr class="hover:bg-surface/50">
+          <td class="px-4 py-3 font-medium">${c.firstName} ${c.lastName}</td>
+          <td class="px-4 py-3 text-secondary">${c.email}</td>
+          <td class="px-4 py-3 hidden sm:table-cell text-secondary">${c.phone || '—'}</td>
+          <td class="px-4 py-3 hidden sm:table-cell text-secondary">${c.city || '—'}</td>
+          <td class="px-4 py-3 font-medium">${c.orders}</td>
+          <td class="px-4 py-3 font-medium">${sym}${c.totalSpent.toFixed(2)}</td>
+        </tr>`).join('');
     }
 
     /* ── Settings ── */
