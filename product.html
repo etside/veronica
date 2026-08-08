@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product — Veronica</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            primary: { DEFAULT: '#141414', light: '#292929' },
+            secondary: '#737373',
+            muted: '#a3a3a3',
+            border: '#e5e5e5',
+            surface: '#fafafa',
+            rose: { DEFAULT: '#f63d68', dark: '#c01048' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; color: #141414; background: #fff; }
+    .scroll-bar { animation: scroll-left 20s linear infinite; }
+    @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .nav-link { position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1.5px; background: #141414; transition: width 0.3s ease; }
+    .nav-link:hover::after { width: 100%; }
+    .size-btn { transition: all 0.2s; }
+    .size-btn.active { background: #141414; color: #fff; border-color: #141414; }
+    .thumb.active { border-color: #141414; }
+    .zoom-lens { display: none; position: absolute; border: 2px solid #f63d68; pointer-events: none; }
+    .toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999; transform: translateY(100px); opacity: 0; transition: all 0.4s ease; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="bg-primary text-white text-[11px] tracking-wider overflow-hidden h-8 flex items-center">
+    <div class="scroll-bar whitespace-nowrap flex gap-16">
+      <span>&#10024; NEW COLLECTION | SHOP NOW &#10024;</span>
+      <span>FREE Shipping Worldwide on orders above: USD 100+</span>
+      <span>&#9888;&#65039; Limited stock! Grab yours before it's gone!</span>
+      <span>&#10024; NEW COLLECTION | SHOP NOW &#10024;</span>
+      <span>FREE Shipping Worldwide on orders above: USD 100+</span>
+      <span>&#9888;&#65039; Limited stock! Grab yours before it's gone!</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white border-b border-border">
+    <div class="max-w-[1536px] mx-auto px-4 lg:px-8 flex items-center justify-between h-16">
+      <a href="index.html" class="text-xl lg:text-2xl font-semibold tracking-wide">VERONICA</a>
+      <nav class="hidden lg:flex items-center gap-8 text-[13px] font-medium tracking-wide">
+        <a href="index.html" class="nav-link">All Products</a>
+        <a href="index.html#new-arrivals" class="nav-link">New Arrivals</a>
+        <a href="index.html#best-sellers" class="nav-link">Best Sellers</a>
+        <a href="index.html" class="nav-link text-rose font-semibold">Sale</a>
+        <a href="index.html#collections" class="nav-link">Collections</a>
+      </nav>
+      <div class="flex items-center gap-4">
+        <button class="p-2 hover:bg-surface rounded-full transition" aria-label="Search">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <a href="cart.html" class="relative p-2 hover:bg-surface rounded-full transition" aria-label="Cart">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span id="cart-badge" class="absolute -top-0.5 -right-0.5 bg-rose text-white text-[9px] w-4 h-4 rounded-full items-center justify-center font-semibold hidden">0</span>
+        </a>
+        <button class="lg:hidden p-2" aria-label="Menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="max-w-[1536px] mx-auto px-4 lg:px-8 py-4">
+    <nav class="flex items-center gap-2 text-[12px] text-secondary">
+      <a href="index.html" class="hover:text-primary transition">Home</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-primary transition">Shop</a>
+      <span>/</span>
+      <span id="breadcrumb-name" class="text-primary font-medium">—</span>
+    </nav>
+  </div>
+
+  <!-- Product Section -->
+  <main class="max-w-[1536px] mx-auto px-4 lg:px-8 pb-16">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+      <!-- Gallery -->
+      <div class="flex flex-col-reverse lg:flex-row gap-4">
+        <!-- Thumbnails -->
+        <div id="thumbs" class="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto lg:max-h-[600px]"></div>
+        <!-- Main Image -->
+        <div class="relative flex-1 bg-surface rounded-xl overflow-hidden aspect-[3/4] cursor-crosshair" id="main-img-wrap">
+          <img id="main-img" src="" alt="" class="w-full h-full object-cover">
+          <div id="zoom-lens" class="zoom-lens w-24 h-24 rounded-lg"></div>
+        </div>
+      </div>
+
+      <!-- Details -->
+      <div class="flex flex-col">
+        <p id="product-brand" class="text-secondary text-[12px] tracking-wider uppercase mb-1">Veronica</p>
+        <h1 id="product-name" class="text-2xl lg:text-3xl font-semibold tracking-wide mb-2">—</h1>
+
+        <!-- Price -->
+        <div class="flex items-center gap-3 mb-6">
+          <span id="product-price" class="text-2xl font-bold">—</span>
+          <span id="product-original" class="text-lg text-secondary line-through hidden"></span>
+          <span id="product-discount" class="bg-primary text-white text-[11px] px-2 py-0.5 rounded font-medium hidden"></span>
+        </div>
+
+        <!-- Description -->
+        <p id="product-desc" class="text-secondary text-[14px] leading-relaxed mb-6"></p>
+
+        <!-- Size Selector -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-[13px] font-semibold tracking-wide">SIZE</span>
+            <button class="text-[12px] text-rose font-medium hover:underline" onclick="document.getElementById('size-guide').classList.toggle('hidden')">Size Guide</button>
+          </div>
+          <div id="size-options" class="flex flex-wrap gap-2"></div>
+          <p id="size-error" class="text-rose text-[12px] mt-2 hidden">Please select a size</p>
+        </div>
+
+        <!-- Size Guide Modal -->
+        <div id="size-guide" class="hidden mb-6 bg-surface rounded-lg p-4">
+          <h4 class="text-[13px] font-semibold mb-2">Size Guide (inches)</h4>
+          <table class="w-full text-[12px]">
+            <thead><tr class="border-b border-border"><th class="py-1 text-left">Size</th><th>Chest</th><th>Length</th><th>Hip</th></tr></thead>
+            <tbody>
+              <tr class="border-b border-border"><td class="py-1">XS</td><td>32"</td><td>38"</td><td>34"</td></tr>
+              <tr class="border-b border-border"><td class="py-1">S</td><td>34"</td><td>39"</td><td>36"</td></tr>
+              <tr class="border-b border-border"><td class="py-1">M</td><td>36"</td><td>40"</td><td>38"</td></tr>
+              <tr class="border-b border-border"><td class="py-1">L</td><td>38"</td><td>41"</td><td>40"</td></tr>
+              <tr><td class="py-1">XL</td><td>40"</td><td>42"</td><td>42"</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Quantity -->
+        <div class="mb-6">
+          <span class="text-[13px] font-semibold tracking-wide block mb-3">QUANTITY</span>
+          <div class="flex items-center gap-0 border border-border rounded-lg w-fit">
+            <button onclick="changeQty(-1)" class="w-10 h-10 flex items-center justify-center text-lg hover:bg-surface transition rounded-l-lg">−</button>
+            <span id="qty" class="w-12 text-center text-[14px] font-medium">1</span>
+            <button onclick="changeQty(1)" class="w-10 h-10 flex items-center justify-center text-lg hover:bg-surface transition rounded-r-lg">+</button>
+          </div>
+        </div>
+
+        <!-- Stock -->
+        <p id="stock-info" class="text-[12px] text-secondary mb-6"></p>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+          <button onclick="addToCart()" class="flex-1 bg-primary text-white text-[13px] font-semibold tracking-wider py-3.5 rounded-lg hover:bg-primary-light transition">
+            ADD TO CART
+          </button>
+          <button onclick="buyNow()" class="flex-1 bg-rose text-white text-[13px] font-semibold tracking-wider py-3.5 rounded-lg hover:bg-rose-dark transition">
+            BUY NOW
+          </button>
+        </div>
+
+        <!-- Accordion -->
+        <div class="border-t border-border">
+          <details class="group" open>
+            <summary class="flex items-center justify-between py-4 cursor-pointer text-[13px] font-semibold tracking-wide">
+              PRODUCT DETAILS
+              <svg class="w-4 h-4 transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+            </summary>
+            <div id="product-details" class="pb-4 text-[13px] text-secondary leading-relaxed"></div>
+          </details>
+          <details class="group">
+            <summary class="flex items-center justify-between py-4 cursor-pointer text-[13px] font-semibold tracking-wide border-t border-border">
+              SHIPPING & RETURNS
+              <svg class="w-4 h-4 transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+            </summary>
+            <div class="pb-4 text-[13px] text-secondary leading-relaxed space-y-2">
+              <p><strong>Shipping:</strong> Free on orders over $100. Standard delivery 5-7 business days.</p>
+              <p><strong>Returns:</strong> Easy 7-day return policy. Items must be unworn with tags attached.</p>
+              <p><strong>International:</strong> We ship worldwide. Duties and taxes may apply.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    <section class="mt-16">
+      <h2 class="text-xl sm:text-2xl font-semibold tracking-wide mb-6">YOU MAY ALSO LIKE</h2>
+      <div id="related-products" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+    </section>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast bg-primary text-white px-6 py-3 rounded-lg shadow-lg text-[13px] font-medium flex items-center gap-2">
+    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+    <span id="toast-msg">Added to cart</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-primary text-white">
+    <div class="max-w-[1536px] mx-auto px-4 py-12 lg:py-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div>
+          <h3 class="text-xl font-semibold tracking-wider mb-3">VERONICA</h3>
+          <p class="text-muted text-[13px] leading-relaxed mb-4">Discover exquisite luxury pret dresses. Elegant, high-quality outfits designed for modern sophistication and timeless style.</p>
+        </div>
+        <div>
+          <h4 class="text-[13px] font-semibold tracking-wider uppercase mb-4">Quick Links</h4>
+          <ul class="space-y-2.5">
+            <li><a href="index.html" class="text-[13px] text-muted hover:text-white transition">All Products</a></li>
+            <li><a href="index.html" class="text-[13px] text-muted hover:text-white transition">New Arrivals</a></li>
+            <li><a href="index.html" class="text-[13px] text-muted hover:text-white transition">Best Sellers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-[13px] font-semibold tracking-wider uppercase mb-4">Help</h4>
+          <ul class="space-y-2.5">
+            <li><a href="#" class="text-[13px] text-muted hover:text-white transition">Shipping Policy</a></li>
+            <li><a href="#" class="text-[13px] text-muted hover:text-white transition">Return & Exchange</a></li>
+            <li><a href="#" class="text-[13px] text-muted hover:text-white transition">Size Guide</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-[13px] font-semibold tracking-wider uppercase mb-4">Stay in Touch</h4>
+          <div class="flex">
+            <input type="email" placeholder="Your email" class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-2.5 text-[13px] text-white placeholder:text-muted focus:outline-none focus:border-white/40 transition">
+            <button class="bg-white text-primary px-4 py-2.5 rounded-r-lg text-[13px] font-semibold hover:bg-gray-100 transition">Subscribe</button>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-[12px] text-muted">&copy; 2026 Veronica. All rights reserved.</p>
+        <div class="flex gap-4">
+          <a href="#" class="text-[12px] text-muted hover:text-white transition">Privacy Policy</a>
+          <a href="#" class="text-[12px] text-muted hover:text-white transition">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/store.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const slug = params.get('slug') || 'gentle';
+    const product = DB.getProduct(slug);
+
+    if (!product) {
+      document.querySelector('main').innerHTML = '<div class="text-center py-32"><h1 class="text-2xl font-semibold mb-4">Product not found</h1><a href="index.html" class="text-rose hover:underline">Back to shop</a></div>';
+    } else {
+      document.title = `${product.name} — Veronica`;
+      document.getElementById('breadcrumb-name').textContent = product.name;
+      document.getElementById('product-name').textContent = product.name;
+      document.getElementById('product-brand').textContent = product.brand || 'Veronica';
+      document.getElementById('product-desc').textContent = product.description || '';
+      document.getElementById('product-details').innerHTML = `
+        <p>${product.description || ''}</p>
+        <ul class="mt-2 list-disc list-inside space-y-1">
+          <li>Premium quality fabric</li>
+          <li>Hand-finished detailing</li>
+          <li>Model is wearing size ${product.sizes?.[1] || 'M'}</li>
+          <li>Dry clean recommended</li>
+        </ul>`;
+
+      // Price
+      const sym = DB.settings().currencySymbol;
+      document.getElementById('product-price').textContent = `${sym}${product.price.toFixed(2)}`;
+      if (product.originalPrice) {
+        document.getElementById('product-original').textContent = `${sym}${product.originalPrice.toFixed(2)}`;
+        document.getElementById('product-original').classList.remove('hidden');
+      }
+      if (product.discount) {
+        document.getElementById('product-discount').textContent = `-${product.discount}%`;
+        document.getElementById('product-discount').classList.remove('hidden');
+      }
+
+      // Stock
+      const stockEl = document.getElementById('stock-info');
+      if (product.stock <= 0) stockEl.innerHTML = '<span class="text-rose font-medium">Out of Stock</span>';
+      else if (product.stock <= 5) stockEl.innerHTML = `<span class="text-rose font-medium">Only ${product.stock} left — order soon!</span>`;
+      else stockEl.textContent = `In stock — ${product.stock} available`;
+
+      // Main image + thumbs
+      const images = product.images?.length ? product.images : [product.image];
+      document.getElementById('main-img').src = images[0];
+      document.getElementById('main-img').alt = product.name;
+      const thumbsEl = document.getElementById('thumbs');
+      images.forEach((img, i) => {
+        const t = document.createElement('img');
+        t.src = img; t.alt = product.name;
+        t.className = `thumb w-16 h-20 lg:w-20 lg:h-24 object-cover rounded-lg cursor-pointer border-2 border-transparent ${i === 0 ? 'active' : ''}`;
+        t.onclick = () => {
+          document.getElementById('main-img').src = img;
+          thumbsEl.querySelectorAll('img').forEach(x => x.classList.remove('active'));
+          t.classList.add('active');
+        };
+        thumbsEl.appendChild(t);
+      });
+
+      // Sizes
+      const sizesEl = document.getElementById('size-options');
+      let selectedSize = null;
+      (product.sizes || ['S','M','L']).forEach(s => {
+        const btn = document.createElement('button');
+        btn.textContent = s;
+        btn.className = 'size-btn border border-border rounded-lg px-5 py-2 text-[13px] font-medium hover:border-primary transition';
+        btn.onclick = () => {
+          selectedSize = s;
+          sizesEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('size-error').classList.add('hidden');
+        };
+        sizesEl.appendChild(btn);
+      });
+
+      // Quantity
+      let qty = 1;
+      function changeQty(d) {
+        qty = Math.max(1, Math.min(product.stock || 99, qty + d));
+        document.getElementById('qty').textContent = qty;
+      }
+
+      // Zoom
+      const wrap = document.getElementById('main-img-wrap');
+      const lens = document.getElementById('zoom-lens');
+      const mainImg = document.getElementById('main-img');
+      wrap.addEventListener('mousemove', e => {
+        const r = wrap.getBoundingClientRect();
+        const x = e.clientX - r.left, y = e.clientY - r.top;
+        lens.style.display = 'block';
+        lens.style.left = (x - 48) + 'px';
+        lens.style.top = (y - 48) + 'px';
+        const pctX = (x / r.width) * 100, pctY = (y / r.height) * 100;
+        mainImg.style.transformOrigin = `${pctX}% ${pctY}%`;
+        mainImg.style.transform = 'scale(2)';
+      });
+      wrap.addEventListener('mouseleave', () => {
+        lens.style.display = 'none';
+        mainImg.style.transform = 'scale(1)';
+      });
+
+      // Cart actions
+      function addToCart() {
+        if (!selectedSize) { document.getElementById('size-error').classList.remove('hidden'); return; }
+        DB.addToCart({ productId: product.id, name: product.name, price: product.price, image: product.image, size: selectedSize, qty });
+        updateCartBadge();
+        showToast(`${product.name} (${selectedSize}) added to cart`);
+      }
+
+      function buyNow() {
+        if (!selectedSize) { document.getElementById('size-error').classList.remove('hidden'); return; }
+        DB.addToCart({ productId: product.id, name: product.name, price: product.price, image: product.image, size: selectedSize, qty });
+        location.href = 'cart.html';
+      }
+
+      // Related
+      const related = DB.products().filter(p => p.id !== product.id).sort(() => Math.random() - 0.5).slice(0, 4);
+      const relEl = document.getElementById('related-products');
+      related.forEach(p => {
+        relEl.innerHTML += `
+          <a href="product.html?slug=${p.slug}" class="product-card cursor-pointer group">
+            <div class="relative bg-surface rounded-lg overflow-hidden mb-3 aspect-[3/4]">
+              <img src="${p.image}" alt="${p.name}" class="product-img w-full h-full object-cover group-hover:scale-105 transition duration-400">
+              ${p.badge ? `<span class="absolute top-2 left-2 bg-rose text-white text-[10px] px-2 py-0.5 rounded font-medium">${p.badge}</span>` : ''}
+            </div>
+            <p class="text-secondary text-[11px] tracking-wide">Veronica</p>
+            <h3 class="text-[13px] font-medium mt-0.5">${p.name}</h3>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-[13px] font-semibold">${sym}${p.price.toFixed(2)}</span>
+              ${p.originalPrice ? `<span class="text-[12px] text-secondary line-through">${sym}${p.originalPrice.toFixed(2)}</span>` : ''}
+            </div>
+          </a>`;
+      });
+    }
+
+    function updateCartBadge() {
+      const c = DB.cartCount();
+      const b = document.getElementById('cart-badge');
+      if (c > 0) { b.textContent = c; b.classList.remove('hidden'); b.classList.add('flex'); }
+      else b.classList.add('hidden');
+    }
+    updateCartBadge();
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+  </script>
+</body>
+</html>

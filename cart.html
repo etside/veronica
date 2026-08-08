@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cart — Veronica</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            primary: { DEFAULT: '#141414', light: '#292929' },
+            secondary: '#737373',
+            muted: '#a3a3a3',
+            border: '#e5e5e5',
+            surface: '#fafafa',
+            rose: { DEFAULT: '#f63d68', dark: '#c01048' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; color: #141414; background: #fff; }
+    .scroll-bar { animation: scroll-left 20s linear infinite; }
+    @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .nav-link { position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1.5px; background: #141414; transition: width 0.3s ease; }
+    .nav-link:hover::after { width: 100%; }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="bg-primary text-white text-[11px] tracking-wider overflow-hidden h-8 flex items-center">
+    <div class="scroll-bar whitespace-nowrap flex gap-16">
+      <span>&#10024; NEW COLLECTION | SHOP NOW &#10024;</span>
+      <span>FREE Shipping Worldwide on orders above: USD 100+</span>
+      <span>&#10024; NEW COLLECTION | SHOP NOW &#10024;</span>
+      <span>FREE Shipping Worldwide on orders above: USD 100+</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white border-b border-border">
+    <div class="max-w-[1536px] mx-auto px-4 lg:px-8 flex items-center justify-between h-16">
+      <a href="index.html" class="text-xl lg:text-2xl font-semibold tracking-wide">VERONICA</a>
+      <nav class="hidden lg:flex items-center gap-8 text-[13px] font-medium tracking-wide">
+        <a href="index.html" class="nav-link">All Products</a>
+        <a href="index.html" class="nav-link">New Arrivals</a>
+        <a href="index.html" class="nav-link">Best Sellers</a>
+        <a href="index.html" class="nav-link text-rose font-semibold">Sale</a>
+        <a href="index.html" class="nav-link">Collections</a>
+      </nav>
+      <div class="flex items-center gap-4">
+        <a href="cart.html" class="relative p-2 hover:bg-surface rounded-full transition" aria-label="Cart">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span id="cart-badge" class="absolute -top-0.5 -right-0.5 bg-rose text-white text-[9px] w-4 h-4 rounded-full items-center justify-center font-semibold hidden">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Cart -->
+  <main class="max-w-[1536px] mx-auto px-4 lg:px-8 py-8 lg:py-12">
+    <h1 class="text-2xl font-semibold tracking-wide mb-8">SHOPPING CART</h1>
+
+    <div id="cart-empty" class="hidden text-center py-20">
+      <svg class="w-16 h-16 mx-auto text-muted mb-4" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <p class="text-secondary text-[15px] mb-4">Your cart is empty</p>
+      <a href="index.html" class="inline-block bg-primary text-white text-[13px] font-semibold px-8 py-3 rounded-lg tracking-wider hover:bg-primary-light transition">CONTINUE SHOPPING</a>
+    </div>
+
+    <div id="cart-content" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Items -->
+      <div id="cart-items" class="lg:col-span-2 space-y-4"></div>
+
+      <!-- Summary -->
+      <div id="cart-summary" class="bg-surface rounded-xl p-6 h-fit sticky top-24">
+        <h3 class="text-[15px] font-semibold tracking-wide mb-4">ORDER SUMMARY</h3>
+        <div class="space-y-3 text-[13px]">
+          <div class="flex justify-between"><span class="text-secondary">Subtotal</span><span id="summary-subtotal" class="font-medium">—</span></div>
+          <div class="flex justify-between"><span class="text-secondary">Shipping</span><span id="summary-shipping" class="font-medium">—</span></div>
+          <div class="flex justify-between"><span class="text-secondary">Tax</span><span id="summary-tax" class="font-medium">$0.00</span></div>
+          <div class="border-t border-border pt-3 flex justify-between text-[15px] font-semibold">
+            <span>Total</span><span id="summary-total">—</span>
+          </div>
+        </div>
+
+        <!-- Coupon -->
+        <div class="mt-6 flex gap-2">
+          <input id="coupon-input" type="text" placeholder="Coupon code" class="flex-1 bg-white border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition">
+          <button onclick="applyCoupon()" class="bg-primary text-white px-4 py-2.5 rounded-lg text-[13px] font-medium hover:bg-primary-light transition">Apply</button>
+        </div>
+        <p id="coupon-msg" class="text-[12px] mt-2 hidden"></p>
+
+        <button onclick="checkout()" class="w-full bg-rose text-white text-[13px] font-semibold tracking-wider py-3.5 rounded-lg mt-6 hover:bg-rose-dark transition">
+          PROCEED TO CHECKOUT
+        </button>
+
+        <div class="mt-4 flex items-center justify-center gap-4 text-muted">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25z"/></svg>
+          <span class="text-[11px]">Secure checkout — SSL encrypted</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Checkout Modal -->
+  <div id="checkout-modal" class="hidden fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 lg:p-8">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-semibold tracking-wide">CHECKOUT</h2>
+        <button onclick="closeCheckout()" class="p-2 hover:bg-surface rounded-full transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="checkout-form" onsubmit="placeOrder(event)" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">First Name *</label>
+            <input name="firstName" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition">
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Last Name *</label>
+            <input name="lastName" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition">
+          </div>
+        </div>
+        <div>
+          <label class="text-[12px] font-medium text-secondary block mb-1">Email *</label>
+          <input name="email" type="email" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition">
+        </div>
+        <div>
+          <label class="text-[12px] font-medium text-secondary block mb-1">Phone *</label>
+          <input name="phone" type="tel" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition">
+        </div>
+        <div>
+          <label class="text-[12px] font-medium text-secondary block mb-1">Address *</label>
+          <input name="address" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">City *</label>
+            <input name="city" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition">
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Zip Code *</label>
+            <input name="zip" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition">
+          </div>
+        </div>
+        <div>
+          <label class="text-[12px] font-medium text-secondary block mb-1">Country *</label>
+          <select name="country" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition">
+            <option value="">Select country</option>
+            <option>United States</option><option>United Kingdom</option><option>Canada</option>
+            <option>Australia</option><option>UAE</option><option>Pakistan</option>
+            <option>Germany</option><option>France</option><option>Other</option>
+          </select>
+        </div>
+
+        <div class="border-t border-border pt-4 mt-4">
+          <h4 class="text-[13px] font-semibold mb-3">PAYMENT METHOD</h4>
+          <div class="space-y-2">
+            <label class="flex items-center gap-3 border border-border rounded-lg p-3 cursor-pointer hover:border-primary transition">
+              <input type="radio" name="payment" value="cod" checked class="accent-primary">
+              <span class="text-[13px]">Cash on Delivery</span>
+            </label>
+            <label class="flex items-center gap-3 border border-border rounded-lg p-3 cursor-pointer hover:border-primary transition">
+              <input type="radio" name="payment" value="card" class="accent-primary">
+              <span class="text-[13px]">Credit / Debit Card</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="bg-surface rounded-lg p-4 mt-4">
+          <div class="flex justify-between text-[13px] mb-1"><span class="text-secondary">Items</span><span id="checkout-items-count">0</span></div>
+          <div class="flex justify-between text-[13px] mb-1"><span class="text-secondary">Subtotal</span><span id="checkout-subtotal">—</span></div>
+          <div class="flex justify-between text-[13px] mb-1"><span class="text-secondary">Shipping</span><span id="checkout-shipping">—</span></div>
+          <div class="flex justify-between text-[14px] font-semibold pt-2 border-t border-border mt-2"><span>Total</span><span id="checkout-total">—</span></div>
+        </div>
+
+        <button type="submit" class="w-full bg-rose text-white text-[13px] font-semibold tracking-wider py-3.5 rounded-lg hover:bg-rose-dark transition mt-2">
+          PLACE ORDER
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-24 right-6 z-[101] bg-primary text-white px-6 py-3 rounded-lg shadow-lg text-[13px] font-medium flex items-center gap-2 transform translate-y-24 opacity-0 transition-all duration-300">
+    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+    <span id="toast-msg"></span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-primary text-white mt-16">
+    <div class="max-w-[1536px] mx-auto px-4 py-12 lg:py-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div>
+          <h3 class="text-xl font-semibold tracking-wider mb-3">VERONICA</h3>
+          <p class="text-muted text-[13px] leading-relaxed mb-4">Discover exquisite luxury pret dresses.</p>
+        </div>
+        <div>
+          <h4 class="text-[13px] font-semibold tracking-wider uppercase mb-4">Quick Links</h4>
+          <ul class="space-y-2.5">
+            <li><a href="index.html" class="text-[13px] text-muted hover:text-white transition">All Products</a></li>
+            <li><a href="index.html" class="text-[13px] text-muted hover:text-white transition">New Arrivals</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-[13px] font-semibold tracking-wider uppercase mb-4">Help</h4>
+          <ul class="space-y-2.5">
+            <li><a href="#" class="text-[13px] text-muted hover:text-white transition">Shipping Policy</a></li>
+            <li><a href="#" class="text-[13px] text-muted hover:text-white transition">Return & Exchange</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-[13px] font-semibold tracking-wider uppercase mb-4">Stay in Touch</h4>
+          <div class="flex">
+            <input type="email" placeholder="Your email" class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-2.5 text-[13px] text-white placeholder:text-muted focus:outline-none focus:border-white/40 transition">
+            <button class="bg-white text-primary px-4 py-2.5 rounded-r-lg text-[13px] font-semibold hover:bg-gray-100 transition">Subscribe</button>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 mt-10 pt-6 text-center">
+        <p class="text-[12px] text-muted">&copy; 2026 Veronica. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/store.js"></script>
+  <script>
+    let couponDiscount = 0;
+    const sym = DB.settings().currencySymbol;
+
+    function renderCart() {
+      const items = DB.cart();
+      const emptyEl = document.getElementById('cart-empty');
+      const contentEl = document.getElementById('cart-content');
+      const itemsEl = document.getElementById('cart-items');
+      const summaryEl = document.getElementById('cart-summary');
+
+      if (items.length === 0) {
+        emptyEl.classList.remove('hidden');
+        contentEl.classList.add('hidden');
+        return;
+      }
+      emptyEl.classList.add('hidden');
+      contentEl.classList.remove('hidden');
+      itemsEl.innerHTML = '';
+
+      items.forEach(item => {
+        const product = DB.getProduct(item.productId) || { name: item.name, image: item.image, price: item.price, slug: '#' };
+        const lineTotal = (item.price || product.price) * item.qty;
+        itemsEl.innerHTML += `
+          <div class="flex gap-4 bg-surface rounded-xl p-4">
+            <a href="product.html?slug=${product.slug}" class="flex-shrink-0 w-24 h-32 rounded-lg overflow-hidden">
+              <img src="${item.image || product.image}" alt="${item.name}" class="w-full h-full object-cover">
+            </a>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <a href="product.html?slug=${product.slug}" class="text-[14px] font-semibold hover:underline">${item.name}</a>
+                  <p class="text-[12px] text-secondary mt-0.5">Size: ${item.size}</p>
+                </div>
+                <button onclick="removeItem('${item.productId}','${item.size}')" class="text-secondary hover:text-rose transition p-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+              <div class="flex items-center justify-between mt-3">
+                <div class="flex items-center gap-0 border border-border rounded-lg">
+                  <button onclick="updateQty('${item.productId}','${item.size}',${item.qty - 1})" class="w-8 h-8 flex items-center justify-center text-sm hover:bg-white transition rounded-l-lg">−</button>
+                  <span class="w-8 text-center text-[13px] font-medium">${item.qty}</span>
+                  <button onclick="updateQty('${item.productId}','${item.size}',${item.qty + 1})" class="w-8 h-8 flex items-center justify-center text-sm hover:bg-white transition rounded-r-lg">+</button>
+                </div>
+                <span class="text-[14px] font-semibold">${sym}${lineTotal.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>`;
+      });
+
+      // Summary
+      const subtotal = DB.cartTotal();
+      const settings = DB.settings();
+      const shipping = subtotal >= settings.shippingFreeThreshold ? 0 : settings.shippingCost;
+      const tax = subtotal * settings.taxRate;
+      const total = Math.max(0, subtotal - couponDiscount + shipping + tax);
+
+      document.getElementById('summary-subtotal').textContent = `${sym}${subtotal.toFixed(2)}`;
+      document.getElementById('summary-shipping').textContent = shipping === 0 ? 'FREE' : `${sym}${shipping.toFixed(2)}`;
+      document.getElementById('summary-tax').textContent = `${sym}${tax.toFixed(2)}`;
+      document.getElementById('summary-total').textContent = `${sym}${total.toFixed(2)}`;
+    }
+
+    function updateQty(pid, size, qty) {
+      DB.updateCartItem(pid, size, qty);
+      renderCart();
+      updateCartBadge();
+    }
+
+    function removeItem(pid, size) {
+      DB.updateCartItem(pid, size, 0);
+      renderCart();
+      updateCartBadge();
+    }
+
+    function applyCoupon() {
+      const code = document.getElementById('coupon-input').value.trim().toUpperCase();
+      const msg = document.getElementById('coupon-msg');
+      if (code === 'VERONICA10') {
+        couponDiscount = DB.cartTotal() * 0.1;
+        msg.textContent = '10% discount applied!';
+        msg.className = 'text-[12px] mt-2 text-green-600';
+      } else if (code === 'SALE20') {
+        couponDiscount = DB.cartTotal() * 0.2;
+        msg.textContent = '20% discount applied!';
+        msg.className = 'text-[12px] mt-2 text-green-600';
+      } else {
+        couponDiscount = 0;
+        msg.textContent = 'Invalid coupon code';
+        msg.className = 'text-[12px] mt-2 text-rose';
+      }
+      msg.classList.remove('hidden');
+      renderCart();
+    }
+
+    function checkout() {
+      const items = DB.cart();
+      if (items.length === 0) return;
+      const subtotal = DB.cartTotal();
+      const settings = DB.settings();
+      const shipping = subtotal >= settings.shippingFreeThreshold ? 0 : settings.shippingCost;
+      const total = Math.max(0, subtotal - couponDiscount + shipping);
+
+      document.getElementById('checkout-items-count').textContent = items.reduce((s, i) => s + i.qty, 0);
+      document.getElementById('checkout-subtotal').textContent = `${sym}${subtotal.toFixed(2)}`;
+      document.getElementById('checkout-shipping').textContent = shipping === 0 ? 'FREE' : `${sym}${shipping.toFixed(2)}`;
+      document.getElementById('checkout-total').textContent = `${sym}${total.toFixed(2)}`;
+      document.getElementById('checkout-modal').classList.remove('hidden');
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkout-modal').classList.add('hidden');
+    }
+
+    function placeOrder(e) {
+      e.preventDefault();
+      const form = new FormData(e.target);
+      const items = DB.cart();
+      const subtotal = DB.cartTotal();
+      const settings = DB.settings();
+      const shipping = subtotal >= settings.shippingFreeThreshold ? 0 : settings.shippingCost;
+      const total = Math.max(0, subtotal - couponDiscount + shipping);
+
+      const order = DB.addOrder({
+        customer: {
+          firstName: form.get('firstName'),
+          lastName: form.get('lastName'),
+          email: form.get('email'),
+          phone: form.get('phone'),
+          address: form.get('address'),
+          city: form.get('city'),
+          zip: form.get('zip'),
+          country: form.get('country'),
+        },
+        items: items.map(i => ({ name: i.name, size: i.size, qty: i.qty, price: i.price, image: i.image })),
+        subtotal, shipping, discount: couponDiscount, total,
+        paymentMethod: form.get('payment'),
+        status: 'pending',
+      });
+
+      DB.clearCart();
+      couponDiscount = 0;
+      updateCartBadge();
+      closeCheckout();
+      showToast(`Order ${order.id} placed successfully!`);
+
+      // Redirect to confirmation after 1.5s
+      setTimeout(() => { location.href = `order.html?id=${order.id}`; }, 1500);
+    }
+
+    function updateCartBadge() {
+      const c = DB.cartCount();
+      const b = document.getElementById('cart-badge');
+      if (c > 0) { b.textContent = c; b.classList.remove('hidden'); b.classList.add('flex'); }
+      else b.classList.add('hidden');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.classList.remove('translate-y-24', 'opacity-0');
+      t.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => { t.classList.add('translate-y-24', 'opacity-0'); t.classList.remove('translate-y-0', 'opacity-100'); }, 3000);
+    }
+
+    renderCart();
+    updateCartBadge();
+  </script>
+</body>
+</html>

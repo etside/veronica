@@ -69,33 +69,29 @@
   <header class="sticky top-0 z-50 bg-white border-b border-border">
     <div class="max-w-[1536px] mx-auto px-4 lg:px-8 flex items-center justify-between h-16">
       <!-- Logo -->
-      <a href="#" class="text-xl lg:text-2xl font-semibold tracking-wide">VERONICA</a>
+      <a href="index.html" class="text-xl lg:text-2xl font-semibold tracking-wide">VERONICA</a>
 
       <!-- Desktop Nav -->
       <nav class="hidden lg:flex items-center gap-8 text-[13px] font-medium tracking-wide">
-        <a href="#" class="nav-link">All Products</a>
-        <a href="#" class="nav-link">New Arrivals</a>
-        <a href="#" class="nav-link">Best Sellers</a>
-        <a href="#" class="nav-link text-rose font-semibold">Sale</a>
-        <a href="#" class="nav-link">Collections</a>
+        <a href="index.html" class="nav-link">All Products</a>
+        <a href="#new-arrivals" class="nav-link">New Arrivals</a>
+        <a href="#best-sellers" class="nav-link">Best Sellers</a>
+        <a href="index.html" class="nav-link text-rose font-semibold">Sale</a>
+        <a href="#collections" class="nav-link">Collections</a>
       </nav>
 
       <!-- Actions -->
       <div class="flex items-center gap-4">
-        <!-- Search -->
         <button class="p-2 hover:bg-surface rounded-full transition" aria-label="Search">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         </button>
-        <!-- Account -->
-        <button class="hidden lg:block p-2 hover:bg-surface rounded-full transition" aria-label="Account">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </button>
-        <!-- Cart -->
-        <button class="relative p-2 hover:bg-surface rounded-full transition" aria-label="Cart">
+        <a href="admin.html" class="hidden lg:block p-2 hover:bg-surface rounded-full transition" aria-label="Admin">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </a>
+        <a href="cart.html" class="relative p-2 hover:bg-surface rounded-full transition" aria-label="Cart">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          <span class="absolute -top-0.5 -right-0.5 bg-rose text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-semibold">0</span>
-        </button>
-        <!-- Mobile Menu -->
+          <span id="cart-badge" class="absolute -top-0.5 -right-0.5 bg-rose text-white text-[9px] w-4 h-4 rounded-full items-center justify-center font-semibold hidden">0</span>
+        </a>
         <button class="lg:hidden p-2" aria-label="Menu">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
@@ -172,7 +168,7 @@
   </section>
 
   <!-- Best Sellers Carousel -->
-  <section class="max-w-[1536px] mx-auto px-4 mb-12">
+  <section id="best-sellers" class="max-w-[1536px] mx-auto px-4 mb-12">
     <div class="flex items-center justify-between mb-6">
       <div>
         <h2 class="text-xl sm:text-2xl font-semibold tracking-wide">BEST SELLERS</h2>
@@ -325,7 +321,7 @@
   </section>
 
   <!-- NEW ARRIVALS -->
-  <section class="max-w-[1536px] mx-auto px-4 mb-12">
+  <section id="new-arrivals" class="max-w-[1536px] mx-auto px-4 mb-12">
     <div class="flex items-center justify-between mb-6">
       <div>
         <h2 class="text-xl sm:text-2xl font-semibold tracking-wide">NEW ARRIVALS</h2>
@@ -396,7 +392,7 @@
   </section>
 
   <!-- Collections -->
-  <section class="max-w-[1536px] mx-auto px-4 mb-12">
+  <section id="collections" class="max-w-[1536px] mx-auto px-4 mb-12">
     <h2 class="text-xl sm:text-2xl font-semibold tracking-wide mb-6">COLLECTIONS</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <a href="#" class="collection-card relative block rounded-xl overflow-hidden aspect-[4/3] group">
@@ -522,7 +518,17 @@
     </div>
   </footer>
 
+  <script src="js/store.js"></script>
   <script>
+    // Update cart badge
+    function updateCartBadge() {
+      const c = DB.cartCount();
+      const b = document.getElementById('cart-badge');
+      if (c > 0) { b.textContent = c; b.classList.remove('hidden'); b.classList.add('flex'); }
+      else b.classList.add('hidden');
+    }
+    updateCartBadge();
+
     // Hero Carousel
     let heroIdx = 0;
     const heroSlides = document.querySelectorAll('.hero-slide');

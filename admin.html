@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — Veronica CMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        fontFamily: { sans: ['Inter', 'sans-serif'] },
+        colors: {
+          primary: { DEFAULT: '#141414', light: '#292929' },
+          secondary: '#737373', muted: '#a3a3a3', border: '#e5e5e5', surface: '#fafafa',
+          rose: { DEFAULT: '#f63d68', dark: '#c01048' },
+        }
+      }}
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; color: #141414; background: #f5f5f5; }
+    .sidebar-link { transition: all 0.15s; }
+    .sidebar-link.active { background: #f63d68; color: #fff; }
+    .sidebar-link:not(.active):hover { background: #e5e5e5; }
+    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.5); }
+    .modal-overlay.open { display: flex; align-items: center; justify-content: center; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #141414; }
+    .tab-active { border-bottom: 2px solid #141414; color: #141414; font-weight: 600; }
+    .toast { position: fixed; bottom: 24px; right: 24px; z-index: 99; transform: translateY(100px); opacity: 0; transition: all 0.4s; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-60 bg-primary text-white flex-shrink-0 hidden lg:flex flex-col">
+      <div class="px-5 py-5 border-b border-white/10">
+        <h1 class="text-lg font-semibold tracking-wider">VERONICA</h1>
+        <p class="text-[11px] text-white/50 mt-0.5">Admin CMS</p>
+      </div>
+      <nav class="flex-1 p-3 space-y-1">
+        <button onclick="showSection('dashboard')" class="sidebar-link active w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px]" data-section="dashboard">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="m3.75 6 8.25-4.5 8.25 4.5m-16.5 0v11.25m16.5 0v-5.25a2.25 2.25 0 0 0-2.25-2.25H6a2.25 2.25 0 0 0-2.25 2.25v5.25"/></svg>
+          Dashboard
+        </button>
+        <button onclick="showSection('products')" class="sidebar-link w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px]" data-section="products">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+          Products
+        </button>
+        <button onclick="showSection('orders')" class="sidebar-link w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px]" data-section="orders">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+          Orders
+        </button>
+        <button onclick="showSection('categories')" class="sidebar-link w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px]" data-section="categories">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path d="M6 6h.008v.008H6V6z"/></svg>
+          Categories
+        </button>
+        <button onclick="showSection('settings')" class="sidebar-link w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px]" data-section="settings">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Settings
+        </button>
+      </nav>
+      <div class="p-4 border-t border-white/10">
+        <a href="../index.html" class="text-[12px] text-white/50 hover:text-white transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          View Store
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top bar -->
+      <header class="bg-white border-b border-border px-6 h-14 flex items-center justify-between flex-shrink-0">
+        <button class="lg:hidden p-2" onclick="document.querySelector('aside').classList.toggle('hidden')">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        </button>
+        <h2 id="page-title" class="text-[15px] font-semibold tracking-wide">Dashboard</h2>
+        <div class="text-[12px] text-secondary">Veronica Admin</div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 p-6 overflow-y-auto">
+        <!-- Dashboard -->
+        <div id="sec-dashboard" class="section">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-xl p-5 border border-border">
+              <p class="text-[12px] text-secondary mb-1">Total Products</p>
+              <p id="stat-products" class="text-2xl font-bold">0</p>
+            </div>
+            <div class="bg-white rounded-xl p-5 border border-border">
+              <p class="text-[12px] text-secondary mb-1">Total Orders</p>
+              <p id="stat-orders" class="text-2xl font-bold">0</p>
+            </div>
+            <div class="bg-white rounded-xl p-5 border border-border">
+              <p class="text-[12px] text-secondary mb-1">Revenue</p>
+              <p id="stat-revenue" class="text-2xl font-bold">$0</p>
+            </div>
+            <div class="bg-white rounded-xl p-5 border border-border">
+              <p class="text-[12px] text-secondary mb-1">Pending Orders</p>
+              <p id="stat-pending" class="text-2xl font-bold">0</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-border p-6">
+            <h3 class="text-[15px] font-semibold mb-4">Recent Orders</h3>
+            <div id="recent-orders" class="text-[13px] text-secondary">No orders yet.</div>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <div id="sec-products" class="section hidden">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <input id="product-search" type="text" placeholder="Search products..." oninput="renderProducts()" class="bg-white border border-border rounded-lg px-4 py-2 text-[13px] w-64 focus:outline-none focus:border-primary transition">
+              <select id="product-cat-filter" onchange="renderProducts()" class="bg-white border border-border rounded-lg px-3 py-2 text-[13px] focus:outline-none">
+                <option value="">All Categories</option>
+              </select>
+            </div>
+            <button onclick="openProductModal()" class="bg-primary text-white text-[13px] font-semibold px-5 py-2.5 rounded-lg hover:bg-primary-light transition flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4.5v15m7.5-7.5h-15"/></svg>
+              Add Product
+            </button>
+          </div>
+          <div class="bg-white rounded-xl border border-border overflow-hidden">
+            <table class="w-full text-[13px]">
+              <thead class="bg-surface border-b border-border">
+                <tr>
+                  <th class="text-left px-4 py-3 font-medium">Product</th>
+                  <th class="text-left px-4 py-3 font-medium hidden sm:table-cell">Category</th>
+                  <th class="text-left px-4 py-3 font-medium">Price</th>
+                  <th class="text-left px-4 py-3 font-medium hidden sm:table-cell">Stock</th>
+                  <th class="text-right px-4 py-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-table" class="divide-y divide-border"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Orders -->
+        <div id="sec-orders" class="section hidden">
+          <div class="flex items-center gap-3 mb-6">
+            <input id="order-search" type="text" placeholder="Search orders..." oninput="renderOrders()" class="bg-white border border-border rounded-lg px-4 py-2 text-[13px] w-64 focus:outline-none focus:border-primary transition">
+            <select id="order-status-filter" onchange="renderOrders()" class="bg-white border border-border rounded-lg px-3 py-2 text-[13px] focus:outline-none">
+              <option value="">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="bg-white rounded-xl border border-border overflow-hidden">
+            <table class="w-full text-[13px]">
+              <thead class="bg-surface border-b border-border">
+                <tr>
+                  <th class="text-left px-4 py-3 font-medium">Order ID</th>
+                  <th class="text-left px-4 py-3 font-medium">Customer</th>
+                  <th class="text-left px-4 py-3 font-medium hidden sm:table-cell">Items</th>
+                  <th class="text-left px-4 py-3 font-medium">Total</th>
+                  <th class="text-left px-4 py-3 font-medium">Status</th>
+                  <th class="text-right px-4 py-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table" class="divide-y divide-border"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div id="sec-categories" class="section hidden">
+          <div class="bg-white rounded-xl border border-border p-6 max-w-xl">
+            <h3 class="text-[15px] font-semibold mb-4">Manage Categories</h3>
+            <div id="categories-list" class="space-y-2 mb-4"></div>
+            <div class="flex gap-2">
+              <input id="new-category" type="text" placeholder="New category name" class="flex-1 bg-surface border border-border rounded-lg px-4 py-2.5 text-[13px] focus:outline-none">
+              <button onclick="addCategory()" class="bg-primary text-white px-5 py-2.5 rounded-lg text-[13px] font-medium hover:bg-primary-light transition">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="sec-settings" class="section hidden">
+          <div class="bg-white rounded-xl border border-border p-6 max-w-2xl space-y-6">
+            <h3 class="text-[15px] font-semibold">Store Settings</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-[12px] font-medium text-secondary block mb-1">Store Name</label>
+                <input id="set-name" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+              </div>
+              <div>
+                <label class="text-[12px] font-medium text-secondary block mb-1">Currency Symbol</label>
+                <input id="set-symbol" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+              </div>
+              <div>
+                <label class="text-[12px] font-medium text-secondary block mb-1">Free Shipping Threshold ($)</label>
+                <input id="set-shipping-threshold" type="number" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+              </div>
+              <div>
+                <label class="text-[12px] font-medium text-secondary block mb-1">Shipping Cost ($)</label>
+                <input id="set-shipping-cost" type="number" step="0.01" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+              </div>
+              <div>
+                <label class="text-[12px] font-medium text-secondary block mb-1">Tax Rate (%)</label>
+                <input id="set-tax" type="number" step="0.01" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+              </div>
+              <div>
+                <label class="text-[12px] font-medium text-secondary block mb-1">Support Email</label>
+                <input id="set-email" type="email" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+              </div>
+              <div>
+                <label class="text-[12px] font-medium text-secondary block mb-1">WhatsApp Number</label>
+                <input id="set-whatsapp" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="text-[12px] font-medium text-secondary block mb-1">Announcement Text</label>
+                <input id="set-announcement" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="saveSettings()" class="bg-primary text-white text-[13px] font-semibold px-6 py-2.5 rounded-lg hover:bg-primary-light transition">Save Settings</button>
+              <button onclick="resetData()" class="border border-rose text-rose text-[13px] font-semibold px-6 py-2.5 rounded-lg hover:bg-rose/5 transition">Reset All Data</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Product Modal -->
+  <div id="product-modal" class="modal-overlay">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 id="modal-title" class="text-[16px] font-semibold">Add Product</h3>
+        <button onclick="closeProductModal()" class="p-2 hover:bg-surface rounded-full transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form id="product-form" onsubmit="saveProduct(event)" class="space-y-4">
+        <input type="hidden" id="pf-id">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <label class="text-[12px] font-medium text-secondary block mb-1">Product Name *</label>
+            <input id="pf-name" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Slug *</label>
+            <input id="pf-slug" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Category</label>
+            <select id="pf-category" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]"></select>
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Price *</label>
+            <input id="pf-price" type="number" step="0.01" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Original Price</label>
+            <input id="pf-original" type="number" step="0.01" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Discount %</label>
+            <input id="pf-discount" type="number" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div>
+            <label class="text-[12px] font-medium text-secondary block mb-1">Stock *</label>
+            <input id="pf-stock" type="number" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div class="col-span-2">
+            <label class="text-[12px] font-medium text-secondary block mb-1">Image URL *</label>
+            <input id="pf-image" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div class="col-span-2">
+            <label class="text-[12px] font-medium text-secondary block mb-1">Sizes (comma-separated)</label>
+            <input id="pf-sizes" placeholder="XS, S, M, L, XL" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div class="col-span-2">
+            <label class="text-[12px] font-medium text-secondary block mb-1">Badge</label>
+            <input id="pf-badge" placeholder="NEW, -10%, SALE" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px]">
+          </div>
+          <div class="col-span-2">
+            <label class="text-[12px] font-medium text-secondary block mb-1">Description</label>
+            <textarea id="pf-desc" rows="3" class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] resize-none"></textarea>
+          </div>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="submit" class="bg-primary text-white text-[13px] font-semibold px-6 py-2.5 rounded-lg hover:bg-primary-light transition">Save Product</button>
+          <button type="button" onclick="closeProductModal()" class="border border-border text-[13px] font-semibold px-6 py-2.5 rounded-lg hover:bg-surface transition">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Order Detail Modal -->
+  <div id="order-modal" class="modal-overlay">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-[16px] font-semibold">Order Details</h3>
+        <button onclick="document.getElementById('order-modal').classList.remove('open')" class="p-2 hover:bg-surface rounded-full transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="order-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast bg-primary text-white px-6 py-3 rounded-lg shadow-lg text-[13px] font-medium flex items-center gap-2">
+    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+    <span id="toast-msg"></span>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    const sym = DB.settings().currencySymbol;
+
+    /* ── Navigation ── */
+    function showSection(name) {
+      document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+      document.getElementById('sec-' + name).classList.remove('hidden');
+      document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-section="${name}"]`).classList.add('active');
+      document.getElementById('page-title').textContent = name.charAt(0).toUpperCase() + name.slice(1);
+      if (name === 'dashboard') renderDashboard();
+      if (name === 'products') renderProducts();
+      if (name === 'orders') renderOrders();
+      if (name === 'categories') renderCategories();
+      if (name === 'settings') loadSettings();
+    }
+
+    /* ── Dashboard ── */
+    function renderDashboard() {
+      const products = DB.products();
+      const orders = DB.orders();
+      const revenue = orders.reduce((s, o) => s + (o.total || 0), 0);
+      const pending = orders.filter(o => o.status === 'pending').length;
+      document.getElementById('stat-products').textContent = products.length;
+      document.getElementById('stat-orders').textContent = orders.length;
+      document.getElementById('stat-revenue').textContent = `${sym}${revenue.toFixed(2)}`;
+      document.getElementById('stat-pending').textContent = pending;
+
+      const recent = document.getElementById('recent-orders');
+      if (orders.length === 0) {
+        recent.innerHTML = '<p class="text-[13px]">No orders yet.</p>';
+      } else {
+        recent.innerHTML = orders.slice(-5).reverse().map(o => `
+          <div class="flex items-center justify-between py-3 border-b border-border last:border-0">
+            <div>
+              <span class="font-medium">${o.id}</span>
+              <span class="text-secondary ml-2">${o.customer.firstName} ${o.customer.lastName}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="font-medium">${sym}${o.total.toFixed(2)}</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-medium ${statusColor(o.status)}">${o.status}</span>
+            </div>
+          </div>`).join('');
+      }
+    }
+
+    function statusColor(s) {
+      const c = { pending: 'bg-yellow-100 text-yellow-800', confirmed: 'bg-blue-100 text-blue-800', shipped: 'bg-purple-100 text-purple-800', delivered: 'bg-green-100 text-green-800', cancelled: 'bg-red-100 text-red-800' };
+      return c[s] || 'bg-gray-100 text-gray-800';
+    }
+
+    /* ── Products ── */
+    function renderProducts() {
+      const search = document.getElementById('product-search').value.toLowerCase();
+      const cat = document.getElementById('product-cat-filter').value;
+      let products = DB.products();
+      if (search) products = products.filter(p => p.name.toLowerCase().includes(search) || p.slug.includes(search));
+      if (cat) products = products.filter(p => p.category === cat);
+
+      // Populate category filter
+      const catFilter = document.getElementById('product-cat-filter');
+      const cats = DB.categories();
+      catFilter.innerHTML = '<option value="">All Categories</option>' + cats.map(c => `<option ${c === cat ? 'selected' : ''}>${c}</option>`).join('');
+
+      const tbody = document.getElementById('products-table');
+      if (products.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-secondary">No products found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = products.map(p => `
+        <tr class="hover:bg-surface/50">
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3">
+              <img src="${p.image}" class="w-10 h-12 object-cover rounded">
+              <div>
+                <p class="font-medium">${p.name}</p>
+                <p class="text-secondary text-[11px]">${p.slug}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-3 hidden sm:table-cell text-secondary">${p.category || '—'}</td>
+          <td class="px-4 py-3 font-medium">${sym}${p.price.toFixed(2)}</td>
+          <td class="px-4 py-3 hidden sm:table-cell ${p.stock <= 5 ? 'text-rose font-medium' : ''}">${p.stock}</td>
+          <td class="px-4 py-3 text-right">
+            <button onclick="editProduct('${p.id}')" class="text-secondary hover:text-primary transition p-1 mr-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931z"/></svg>
+            </button>
+            <button onclick="deleteProduct('${p.id}')" class="text-secondary hover:text-rose transition p-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg>
+            </button>
+          </td>
+        </tr>`).join('');
+    }
+
+    function openProductModal(product) {
+      document.getElementById('modal-title').textContent = product ? 'Edit Product' : 'Add Product';
+      document.getElementById('pf-id').value = product?.id || '';
+      document.getElementById('pf-name').value = product?.name || '';
+      document.getElementById('pf-slug').value = product?.slug || '';
+      document.getElementById('pf-price').value = product?.price || '';
+      document.getElementById('pf-original').value = product?.originalPrice || '';
+      document.getElementById('pf-discount').value = product?.discount || '';
+      document.getElementById('pf-stock').value = product?.stock ?? '';
+      document.getElementById('pf-image').value = product?.image || '';
+      document.getElementById('pf-sizes').value = product?.sizes?.join(', ') || 'XS, S, M, L, XL';
+      document.getElementById('pf-badge').value = product?.badge || '';
+      document.getElementById('pf-desc').value = product?.description || '';
+      const catSel = document.getElementById('pf-category');
+      catSel.innerHTML = DB.categories().map(c => `<option ${product?.category === c ? 'selected' : ''}>${c}</option>`).join('');
+      document.getElementById('product-modal').classList.add('open');
+    }
+
+    function closeProductModal() {
+      document.getElementById('product-modal').classList.remove('open');
+    }
+
+    function editProduct(id) {
+      openProductModal(DB.products().find(p => p.id === id));
+    }
+
+    function saveProduct(e) {
+      e.preventDefault();
+      const id = document.getElementById('pf-id').value;
+      const data = {
+        name: document.getElementById('pf-name').value.trim(),
+        slug: document.getElementById('pf-slug').value.trim().toLowerCase().replace(/\s+/g, '-'),
+        price: parseFloat(document.getElementById('pf-price').value),
+        originalPrice: parseFloat(document.getElementById('pf-original').value) || null,
+        discount: parseInt(document.getElementById('pf-discount').value) || null,
+        stock: parseInt(document.getElementById('pf-stock').value),
+        image: document.getElementById('pf-image').value.trim(),
+        sizes: document.getElementById('pf-sizes').value.split(',').map(s => s.trim()).filter(Boolean),
+        badge: document.getElementById('pf-badge').value.trim() || null,
+        category: document.getElementById('pf-category').value,
+        description: document.getElementById('pf-desc').value.trim(),
+      };
+      if (id) DB.updateProduct(id, data);
+      else DB.addProduct(data);
+      closeProductModal();
+      renderProducts();
+      showToast(id ? 'Product updated' : 'Product added');
+    }
+
+    function deleteProduct(id) {
+      if (!confirm('Delete this product?')) return;
+      DB.deleteProduct(id);
+      renderProducts();
+      showToast('Product deleted');
+    }
+
+    /* ── Orders ── */
+    function renderOrders() {
+      const search = document.getElementById('order-search').value.toLowerCase();
+      const status = document.getElementById('order-status-filter').value;
+      let orders = DB.orders();
+      if (search) orders = orders.filter(o => o.id.toLowerCase().includes(search) || o.customer.firstName.toLowerCase().includes(search) || o.customer.lastName.toLowerCase().includes(search) || o.customer.email.toLowerCase().includes(search));
+      if (status) orders = orders.filter(o => o.status === status);
+
+      const tbody = document.getElementById('orders-table');
+      if (orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-secondary">No orders found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = orders.reverse().map(o => `
+        <tr class="hover:bg-surface/50">
+          <td class="px-4 py-3 font-medium">${o.id}</td>
+          <td class="px-4 py-3">${o.customer.firstName} ${o.customer.lastName}</td>
+          <td class="px-4 py-3 hidden sm:table-cell text-secondary">${o.items.length} item(s)</td>
+          <td class="px-4 py-3 font-medium">${sym}${o.total.toFixed(2)}</td>
+          <td class="px-4 py-3">
+            <select onchange="updateOrderStatus('${o.id}', this.value)" class="text-[11px] font-medium rounded px-2 py-1 border-0 ${statusColor(o.status)}">
+              ${['pending','confirmed','shipped','delivered','cancelled'].map(s => `<option ${o.status===s?'selected':''}>${s}</option>`).join('')}
+            </select>
+          </td>
+          <td class="px-4 py-3 text-right">
+            <button onclick="viewOrder('${o.id}')" class="text-secondary hover:text-primary transition p-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+            </button>
+          </td>
+        </tr>`).join('');
+    }
+
+    function updateOrderStatus(id, status) {
+      DB.updateOrder(id, { status });
+      renderOrders();
+      showToast('Order status updated');
+    }
+
+    function viewOrder(id) {
+      const o = DB.orders().find(x => x.id === id);
+      if (!o) return;
+      const c = o.customer;
+      document.getElementById('order-detail-content').innerHTML = `
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3 text-[13px]">
+            <div><span class="text-secondary">Order:</span> <span class="font-medium">${o.id}</span></div>
+            <div><span class="text-secondary">Date:</span> ${new Date(o.createdAt).toLocaleDateString()}</div>
+            <div><span class="text-secondary">Payment:</span> ${o.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Card'}</div>
+            <div><span class="text-secondary">Status:</span> <span class="font-medium">${o.status}</span></div>
+          </div>
+          <div class="border-t border-border pt-4">
+            <p class="text-[12px] font-semibold mb-2">CUSTOMER</p>
+            <p class="text-[13px]">${c.firstName} ${c.lastName}</p>
+            <p class="text-[13px] text-secondary">${c.email} &middot; ${c.phone}</p>
+            <p class="text-[13px] text-secondary">${c.address}, ${c.city}, ${c.zip}, ${c.country}</p>
+          </div>
+          <div class="border-t border-border pt-4">
+            <p class="text-[12px] font-semibold mb-2">ITEMS</p>
+            <div class="space-y-2">
+              ${o.items.map(i => `
+                <div class="flex gap-3 items-center">
+                  <img src="${i.image}" class="w-10 h-12 object-cover rounded">
+                  <div class="flex-1 text-[13px]">${i.name} <span class="text-secondary">(×${i.qty})</span></div>
+                  <span class="font-medium">${sym}${(i.price * i.qty).toFixed(2)}</span>
+                </div>`).join('')}
+            </div>
+          </div>
+          <div class="border-t border-border pt-4 flex justify-between font-semibold text-[14px]">
+            <span>Total</span><span>${sym}${o.total.toFixed(2)}</span>
+          </div>
+        </div>`;
+      document.getElementById('order-modal').classList.add('open');
+    }
+
+    /* ── Categories ── */
+    function renderCategories() {
+      const cats = DB.categories();
+      document.getElementById('categories-list').innerHTML = cats.map((c, i) => `
+        <div class="flex items-center justify-between bg-surface rounded-lg px-4 py-2.5">
+          <span class="text-[13px]">${c}</span>
+          ${i > 4 ? `<button onclick="removeCategory(${i})" class="text-secondary hover:text-rose transition p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>` : ''}
+        </div>`).join('');
+    }
+
+    function addCategory() {
+      const input = document.getElementById('new-category');
+      const name = input.value.trim();
+      if (!name) return;
+      const cats = DB.categories();
+      if (cats.includes(name)) { showToast('Category already exists'); return; }
+      cats.push(name);
+      DB.saveCategories(cats);
+      input.value = '';
+      renderCategories();
+      showToast('Category added');
+    }
+
+    function removeCategory(idx) {
+      const cats = DB.categories();
+      cats.splice(idx, 1);
+      DB.saveCategories(cats);
+      renderCategories();
+      showToast('Category removed');
+    }
+
+    /* ── Settings ── */
+    function loadSettings() {
+      const s = DB.settings();
+      document.getElementById('set-name').value = s.storeName;
+      document.getElementById('set-symbol').value = s.currencySymbol;
+      document.getElementById('set-shipping-threshold').value = s.shippingFreeThreshold;
+      document.getElementById('set-shipping-cost').value = s.shippingCost;
+      document.getElementById('set-tax').value = s.taxRate * 100;
+      document.getElementById('set-email').value = s.email;
+      document.getElementById('set-whatsapp').value = s.whatsapp;
+      document.getElementById('set-announcement').value = s.announcementText;
+    }
+
+    function saveSettings() {
+      DB.saveSettings({
+        ...DB.settings(),
+        storeName: document.getElementById('set-name').value.trim(),
+        currencySymbol: document.getElementById('set-symbol').value.trim(),
+        shippingFreeThreshold: parseFloat(document.getElementById('set-shipping-threshold').value),
+        shippingCost: parseFloat(document.getElementById('set-shipping-cost').value),
+        taxRate: parseFloat(document.getElementById('set-tax').value) / 100,
+        email: document.getElementById('set-email').value.trim(),
+        whatsapp: document.getElementById('set-whatsapp').value.trim(),
+        announcementText: document.getElementById('set-announcement').value.trim(),
+      });
+      showToast('Settings saved');
+    }
+
+    function resetData() {
+      if (!confirm('This will delete ALL products, orders, and settings. Are you sure?')) return;
+      if (!confirm('FINAL WARNING: This cannot be undone. Continue?')) return;
+      Object.keys(localStorage).filter(k => k.startsWith('veronica_')).forEach(k => localStorage.removeItem(k));
+      DB.seed();
+      showToast('Data reset to defaults');
+      showSection('dashboard');
+    }
+
+    /* ── Toast ── */
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    /* ── Init ── */
+    showSection('dashboard');
+  </script>
+</body>
+</html>

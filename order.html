@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Order Confirmation — Veronica</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        fontFamily: { sans: ['Inter', 'sans-serif'] },
+        colors: {
+          primary: { DEFAULT: '#141414', light: '#292929' },
+          secondary: '#737373', muted: '#a3a3a3', border: '#e5e5e5', surface: '#fafafa',
+          rose: { DEFAULT: '#f63d68', dark: '#c01048' },
+        }
+      }}
+    }
+  </script>
+  <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;color:#141414;background:#fff}</style>
+</head>
+<body>
+  <header class="bg-white border-b border-border">
+    <div class="max-w-[1536px] mx-auto px-4 lg:px-8 flex items-center justify-between h-16">
+      <a href="index.html" class="text-xl lg:text-2xl font-semibold tracking-wide">VERONICA</a>
+    </div>
+  </header>
+
+  <main class="max-w-[640px] mx-auto px-4 py-16 text-center">
+    <div id="confirmed" class="hidden">
+      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h1 class="text-2xl font-semibold tracking-wide mb-2">ORDER CONFIRMED</h1>
+      <p class="text-secondary text-[14px] mb-6">Thank you for your purchase!</p>
+      <div class="bg-surface rounded-xl p-6 text-left mb-8">
+        <div class="flex justify-between text-[13px] mb-2"><span class="text-secondary">Order ID</span><span id="order-id" class="font-semibold">—</span></div>
+        <div class="flex justify-between text-[13px] mb-2"><span class="text-secondary">Date</span><span id="order-date">—</span></div>
+        <div class="flex justify-between text-[13px] mb-2"><span class="text-secondary">Payment</span><span id="order-payment">—</span></div>
+        <div class="flex justify-between text-[13px] mb-2"><span class="text-secondary">Status</span><span id="order-status" class="font-medium text-rose">—</span></div>
+        <div class="border-t border-border mt-3 pt-3">
+          <p class="text-[12px] font-semibold mb-2">SHIPPING TO</p>
+          <p id="order-address" class="text-[13px] text-secondary"></p>
+        </div>
+      </div>
+      <h3 class="text-[15px] font-semibold tracking-wide mb-4 text-left">ORDER ITEMS</h3>
+      <div id="order-items" class="space-y-3 mb-8"></div>
+      <div class="flex justify-between text-[15px] font-semibold border-t border-border pt-4 mb-8">
+        <span>Total</span><span id="order-total">—</span>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a href="index.html" class="flex-1 bg-primary text-white text-[13px] font-semibold tracking-wider py-3 rounded-lg text-center hover:bg-primary-light transition">CONTINUE SHOPPING</a>
+        <a href="index.html" onclick="localStorage.removeItem('veronica_orders');location.reload()" class="flex-1 border border-border text-[13px] font-semibold tracking-wider py-3 rounded-lg text-center hover:bg-surface transition">VIEW MORE</a>
+      </div>
+    </div>
+    <div id="not-found" class="hidden">
+      <h1 class="text-2xl font-semibold mb-4">Order not found</h1>
+      <a href="index.html" class="text-rose hover:underline">Back to shop</a>
+    </div>
+  </main>
+
+  <script src="js/store.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const orderId = params.get('id');
+    const orders = DB.orders();
+    const order = orders.find(o => o.id === orderId);
+    const sym = DB.settings().currencySymbol;
+
+    if (order) {
+      document.getElementById('confirmed').classList.remove('hidden');
+      document.getElementById('order-id').textContent = order.id;
+      document.getElementById('order-date').textContent = new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('order-payment').textContent = order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Credit / Debit Card';
+      document.getElementById('order-status').textContent = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+      const c = order.customer;
+      document.getElementById('order-address').textContent = `${c.firstName} ${c.lastName}, ${c.address}, ${c.city}, ${c.zip}, ${c.country}`;
+      document.getElementById('order-total').textContent = `${sym}${order.total.toFixed(2)}`;
+      const itemsEl = document.getElementById('order-items');
+      order.items.forEach(item => {
+        itemsEl.innerHTML += `
+          <div class="flex gap-3 bg-surface rounded-lg p-3">
+            <img src="${item.image}" alt="${item.name}" class="w-16 h-20 object-cover rounded">
+            <div class="flex-1">
+              <p class="text-[13px] font-medium">${item.name}</p>
+              <p class="text-[12px] text-secondary">Size: ${item.size} &middot; Qty: ${item.qty}</p>
+              <p class="text-[13px] font-semibold mt-1">${sym}${(item.price * item.qty).toFixed(2)}</p>
+            </div>
+          </div>`;
+      });
+    } else {
+      document.getElementById('not-found').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
