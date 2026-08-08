@@ -33,7 +33,31 @@
   </style>
 </head>
 <body>
-  <div class="flex min-h-screen">
+  <!-- Login Screen -->
+  <div id="login-screen" class="min-h-screen flex items-center justify-center bg-surface">
+    <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-semibold tracking-wider">VERONICA</h1>
+        <p class="text-secondary text-[13px] mt-1">Admin CMS</p>
+      </div>
+      <form onsubmit="login(event)" class="space-y-4">
+        <div>
+          <label class="text-[12px] font-medium text-secondary block mb-1">Email</label>
+          <input id="login-email" type="email" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition" placeholder="admin@veronica.com">
+        </div>
+        <div>
+          <label class="text-[12px] font-medium text-secondary block mb-1">Password</label>
+          <input id="login-pass" type="password" required class="w-full border border-border rounded-lg px-3 py-2.5 text-[13px] focus:outline-none focus:border-primary transition" placeholder="Enter password">
+        </div>
+        <p id="login-error" class="text-rose text-[12px] hidden">Invalid credentials</p>
+        <button type="submit" class="w-full bg-primary text-white text-[13px] font-semibold tracking-wider py-3 rounded-lg hover:bg-primary-light transition">SIGN IN</button>
+      </form>
+      <p class="text-center text-[11px] text-muted mt-4"><a href="index.html" class="hover:underline">← Back to store</a></p>
+    </div>
+  </div>
+
+  <!-- Admin App (hidden until login) -->
+  <div id="admin-app" class="hidden flex min-h-screen">
     <!-- Sidebar -->
     <aside class="w-60 bg-primary text-white flex-shrink-0 hidden lg:flex flex-col">
       <div class="px-5 py-5 border-b border-white/10">
@@ -62,11 +86,15 @@
           Settings
         </button>
       </nav>
-      <div class="p-4 border-t border-white/10">
+      <div class="p-4 border-t border-white/10 space-y-2">
         <a href="../index.html" class="text-[12px] text-white/50 hover:text-white transition flex items-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
           View Store
         </a>
+        <button onclick="logout()" class="text-[12px] text-white/50 hover:text-white transition flex items-center gap-2 w-full">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
+          Sign Out
+        </button>
       </div>
     </aside>
 
@@ -615,7 +643,33 @@
     }
 
     /* ── Init ── */
-    showSection('dashboard');
+    function checkAuth() {
+      if (sessionStorage.getItem('veronica_admin_auth') === 'true') {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('admin-app').classList.remove('hidden');
+        document.getElementById('admin-app').classList.add('flex');
+        showSection('dashboard');
+      }
+    }
+    function login(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const pass = document.getElementById('login-pass').value;
+      if (email === 'admin@veronica.com' && pass === 'Password') {
+        sessionStorage.setItem('veronica_admin_auth', 'true');
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('admin-app').classList.remove('hidden');
+        document.getElementById('admin-app').classList.add('flex');
+        showSection('dashboard');
+      } else {
+        document.getElementById('login-error').classList.remove('hidden');
+      }
+    }
+    function logout() {
+      sessionStorage.removeItem('veronica_admin_auth');
+      location.reload();
+    }
+    checkAuth();
   </script>
 </body>
 </html>
